@@ -41,7 +41,8 @@ bool ClientHandler::DoClose(CefRefPtr<CefBrowser> browser)
 	// The frame window will be the parent of the browser window
 	HWND hWindow = GetParent( browser->GetHost()->GetWindowHandle() );
 
-	return false;
+	// call parent
+	return CefLifeSpanHandler::DoClose(browser);
 }
 
 void ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
@@ -56,19 +57,25 @@ void ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 	// assign new browser
 	CefBrowser* pBrowser = browser;
 	::SendMessage( hWindow, WM_APP_CEF_NEW_BROWSER, (WPARAM)nBrowserId, (LPARAM)pBrowser );
+
+	// call parent
+	CefLifeSpanHandler::OnAfterCreated(browser);
 }
 
 void ClientHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 {
 	REQUIRE_UI_THREAD();
 
-	// get browser ID
-	INT nBrowserId = browser->GetIdentifier();
-	// The frame window will be the parent of the browser window
-	HWND hWindow = GetParent( browser->GetHost()->GetWindowHandle() );
+	//// get browser ID
+	//INT nBrowserId = browser->GetIdentifier();
+	//// The frame window will be the parent of the browser window
+	//HWND hWindow = GetParent( browser->GetHost()->GetWindowHandle() );
 
-	// close browser
-	::SendMessage( hWindow, WM_APP_CEF_CLOSE_BROWSER, (WPARAM)nBrowserId, (LPARAM)NULL );
+	//// close browser
+	//::SendMessage( hWindow, WM_APP_CEF_CLOSE_BROWSER, (WPARAM)nBrowserId, (LPARAM)NULL );
+
+	// call parent
+	CefLifeSpanHandler::OnBeforeClose(browser);
 }
 
 bool ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& target_url, const CefString& target_frame_name, const CefPopupFeatures& popupFeatures, CefWindowInfo& windowInfo, CefRefPtr<CefClient>& client, CefBrowserSettings& settings, bool* no_javascript_access)
@@ -78,6 +85,10 @@ bool ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFr
 		// Cancel popups in off-screen rendering mode.
 		return true;
 	}
+
+	// set client
+	client = this;
+
 	// The frame window will be the parent of the browser window
 	HWND hWindow = GetParent( browser->GetHost()->GetWindowHandle() );
 
@@ -90,8 +101,8 @@ bool ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFr
 	if( ::SendMessage( hWindow, WM_APP_CEF_NEW_WINDOW, (WPARAM)&popupFeatures, (LPARAM)&windowInfo) == S_FALSE )
 		return true;
 
-	// return false to create browser
-	return false;
+	// call parent
+	return CefLifeSpanHandler::OnBeforePopup(browser, frame, target_url, target_frame_name, popupFeatures, windowInfo, client, settings, no_javascript_access);
 }
 
 void ClientHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
@@ -99,6 +110,9 @@ void ClientHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr
 	if((params->GetTypeFlags() & (CM_TYPEFLAG_PAGE | CM_TYPEFLAG_FRAME)) != 0)
 	{
 	}
+
+	// call parent
+	CefContextMenuHandler::OnBeforeContextMenu(browser, frame, params, model);
 }
 
 bool ClientHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, int command_id, EventFlags event_flags)
@@ -106,7 +120,8 @@ bool ClientHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser, CefRefPt
 	// The frame window will be the parent of the browser window
 	HWND hWindow = GetParent( browser->GetHost()->GetWindowHandle() );
 
-	return false;
+	// call parent
+	return CefContextMenuHandler::OnContextMenuCommand(browser, frame, params, command_id, event_flags);
 }
 
 void ClientHandler::OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward)
@@ -127,6 +142,9 @@ void ClientHandler::OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isL
 
 	// send message
 	::SendMessage( hWindow, WM_APP_CEF_STATE_CHANGE, (WPARAM)nState, NULL );
+
+	// call parent
+	CefLoadHandler::OnLoadingStateChange(browser, isLoading, canGoBack, canGoForward);
 }
 
 void ClientHandler::OnAddressChange(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& url)
@@ -138,6 +156,9 @@ void ClientHandler::OnAddressChange(CefRefPtr<CefBrowser> browser, CefRefPtr<Cef
 
 	LPCTSTR pszURL(url.c_str());
 	::SendMessage( hWindow, WM_APP_CEF_ADDRESS_CHANGE, (WPARAM)pszURL, NULL );
+
+	// call parent
+	CefDisplayHandler::OnAddressChange(browser, frame, url);
 }
 
 void ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser, const CefString& title)
@@ -149,6 +170,9 @@ void ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser, const CefString
 
 	LPCTSTR pszTitle(title.c_str());
 	::SendMessage( hWindow, WM_APP_CEF_TITLE_CHANGE, (WPARAM)pszTitle, NULL );
+
+	// call parent
+	CefDisplayHandler::OnTitleChange(browser, title);
 }
 
 void ClientHandler::OnStatusMessage(CefRefPtr<CefBrowser> browser, const CefString& value)
@@ -160,6 +184,9 @@ void ClientHandler::OnStatusMessage(CefRefPtr<CefBrowser> browser, const CefStri
 
 	LPCTSTR pszStatus(value.c_str());
 	::SendMessage( hWindow, WM_APP_CEF_STATUS_MESSAGE, (WPARAM)pszStatus, NULL );
+
+	// call parent
+	CefDisplayHandler::OnStatusMessage(browser, value);
 }
 
 bool ClientHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString& message, const CefString& source, int line)
@@ -209,6 +236,9 @@ void ClientHandler::OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFram
 
 	// send message
 	::SendMessage( hWindow, WM_APP_CEF_LOAD_START, NULL, NULL);
+
+	// call parent
+	CefLoadHandler::OnLoadStart(browser, frame);
 }
 
 void ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode)
@@ -220,6 +250,9 @@ void ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 
 	// send message
 	::SendMessage( hWindow, WM_APP_CEF_LOAD_END, httpStatusCode, NULL);
+
+	// call parent
+	CefLoadHandler::OnLoadEnd(browser, frame, httpStatusCode);
 }
 
 void ClientHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)
@@ -235,6 +268,9 @@ void ClientHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFram
 		LPCTSTR pszSearch(failedUrl.c_str());
 		::SendMessage( hWindow, WM_APP_CEF_SEARCH_URL, (WPARAM)pszSearch, NULL );
 	}
+
+	// call parent
+	CefLoadHandler::OnLoadError(browser, frame, errorCode, errorText, failedUrl);
 }
 
 bool ClientHandler::GetAuthCredentials(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, bool isProxy, const CefString& host, int port, const CefString& realm, const CefString& scheme, CefRefPtr<CefAuthCallback> callback)
@@ -269,13 +305,15 @@ bool ClientHandler::OnQuotaRequest(CefRefPtr<CefBrowser> browser, const CefStrin
 
 	// Grant the quota request if the size is reasonable.
 	callback->Continue(new_size <= max_size);
-	return true;
+
+	// call parent
+	return CefRequestHandler::OnQuotaRequest(browser, origin_url, new_size, callback);
 }
 
 bool ClientHandler::OnBeforePluginLoad(CefRefPtr<CefBrowser> browser, const CefString& url, const CefString& policy_url, CefRefPtr<CefWebPluginInfo> info)
 {
 	// do default
-	return FALSE;
+	return CefRequestHandler::OnBeforePluginLoad(browser, url, policy_url, info);
 }
 
 bool ClientHandler::OnCertificateError(cef_errorcode_t cert_error, const CefString& request_url, CefRefPtr<CefAllowCertificateErrorCallback> callback)
@@ -306,11 +344,13 @@ bool ClientHandler::OnCertificateError(cef_errorcode_t cert_error, const CefStri
 bool ClientHandler::OnBeforeResourceLoad(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request)
 {
 	// do defulat
-	return FALSE;
+	return CefRequestHandler::OnBeforeResourceLoad(browser, frame, request);
 }
 
 void ClientHandler::OnProtocolExecution(CefRefPtr<CefBrowser> browser, const CefString& url, bool& allow_os_execution)
 {
+	// do default
+	CefRequestHandler::OnProtocolExecution(browser, url, allow_os_execution);
 }
 
 bool ClientHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, bool is_redirect)
@@ -327,8 +367,9 @@ bool ClientHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefF
 		// cancel navigation
 		return TRUE;
 	}
-	// allow navigation
-	return FALSE;
+
+	// call parent
+	return CefRequestHandler::OnBeforeBrowse(browser, frame, request, is_redirect);
 }
 
 std::string ClientHandler::GetDownloadPath(const std::string& file_name)

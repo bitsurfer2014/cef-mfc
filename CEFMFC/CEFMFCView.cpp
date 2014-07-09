@@ -30,6 +30,7 @@ BEGIN_MESSAGE_MAP(CCEFMFCView, CView)
 	ON_WM_RBUTTONUP()
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
+	ON_WM_CLOSE()
 	ON_COMMAND(ID_FILE_NEW_WINDOW, &CCEFMFCView::OnFileNewWindow)
 	ON_UPDATE_COMMAND_UI(ID_GO_BACK, &CCEFMFCView::OnUpdateGoBack)
 	ON_COMMAND(ID_GO_BACK, &CCEFMFCView::OnGoBack)
@@ -64,7 +65,7 @@ BEGIN_MESSAGE_MAP(CCEFMFCView, CView)
 	ON_MESSAGE(WM_APP_CEF_WINDOW_CHECK, &CCEFMFCView::OnWindowCheck)
 	ON_MESSAGE(WM_APP_CEF_NEW_WINDOW, &CCEFMFCView::OnNewWindow)
 	ON_MESSAGE(WM_APP_CEF_AUTHENTICATE, &CCEFMFCView::OnAuthenticate)
-	ON_MESSAGE(WM_APP_CEF_BAD_CERTIFICATE, &CCEFMFCView::OnBadCertificate)
+	ON_MESSAGE(WM_APP_CEF_BAD_CERTIFICATE, &CCEFMFCView::OnBadCertificate)	
 END_MESSAGE_MAP()
 
 // CCEFMFCView construction/destruction
@@ -178,6 +179,17 @@ BOOL CCEFMFCView::OnEraseBkgnd(CDC* pDC)
 	}
 
 	return CView::OnEraseBkgnd(pDC);
+}
+
+
+void CCEFMFCView::OnClose()
+{
+	// get window handle
+	HWND hBrowser = m_cefBrowser->GetHost()->GetWindowHandle();
+	// destroy browser window
+	::DestroyWindow(hBrowser);
+
+	CView::OnClose();
 }
 
 

@@ -81,7 +81,7 @@ BOOL CCEFMFCApp::InitInstance()
 	CefMainArgs main_args(GetModuleHandle(NULL));
 
 	// Execute the secondary process, if any.
-	int exit_code = CefExecuteProcess(main_args, m_cefApp.get());
+	int exit_code = CefExecuteProcess(main_args, m_cefApp.get(), NULL);
 	if (exit_code >= 0)
 		return exit_code;
 
@@ -101,7 +101,7 @@ BOOL CCEFMFCApp::InitInstance()
 	CefString(&settings.cache_path) = szCEFCache;
 
 	//CEF Initiaized
-	m_bCEFInitialized = CefInitialize(main_args, settings, m_cefApp.get());
+	m_bCEFInitialized = CefInitialize(main_args, settings, m_cefApp.get(), NULL);
 
 
 	// Initialize OLE libraries

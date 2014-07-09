@@ -43,6 +43,7 @@ protected:
 	virtual void OnInitialUpdate();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnClose();
 
 	afx_msg void OnEditFind();
 	afx_msg void OnUpdateEditCut(CCmdUI *pCmdUI);
@@ -101,7 +102,7 @@ public:
 	CString m_szLocationName;
 	CString m_szLocationURL;
 
-	CefRefPtr<CefBrowser> m_cefBrowser;
+	CefRefPtr<CefBrowser> m_cefBrowser;	
 };
 
 #ifndef _DEBUG  // debug version in CEFMFCView.cpp

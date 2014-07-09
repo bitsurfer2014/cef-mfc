@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -21,6 +21,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -28,6 +29,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -71,9 +73,9 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>xcopy /y /e /i $(CEF_PATH)out\Debug\locales $(OutputPath)locales
-xcopy /y $(CEF_PATH)out\Debug\*.dll $(OutputPath)
-xcopy /y $(CEF_PATH)out\Debug\*.pak $(OutputPath)
+      <Command>xcopy /y /e /i $(CEF_PATH)Resources\locales $(OutputPath)locales
+xcopy /y $(CEF_PATH)Resources\*.pak $(OutputPath)
+xcopy /y $(CEF_PATH)Debug\*.dll $(OutputPath)
 </Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -106,9 +108,9 @@ xcopy /y $(CEF_PATH)out\Debug\*.pak $(OutputPath)
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>xcopy /y /e /i $(CEF_PATH)out\Release\locales $(OutputPath)locales
-xcopy /y $(CEF_PATH)out\Release\*.dll $(OutputPath)
-xcopy /y $(CEF_PATH)out\Release\*.pak $(OutputPath)</Command>
+      <Command>xcopy /y /e /i $(CEF_PATH)Resources\locales $(OutputPath)locales
+xcopy /y $(CEF_PATH)Resources\*.pak $(OutputPath)
+xcopy /y $(CEF_PATH)Release\*.dll $(OutputPath)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy CEF Files</Message>
