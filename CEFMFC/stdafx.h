@@ -42,6 +42,15 @@
 #pragma comment(lib, "libcef.lib")
 #pragma comment(lib, "libcef_dll_wrapper.lib")
 
+// Set to 0 to disable sandbox support.
+#define CEF_ENABLE_SANDBOX 0
+#if CEF_ENABLE_SANDBOX
+// The cef_sandbox.lib static library is currently built with VS2010. It may not
+// link successfully with other VS versions.
+#pragma comment(lib, "cef_sandbox.lib")
+#endif
+
+
 #define WM_APP_CEF_LOAD_START		(WM_APP + 301)
 #define WM_APP_CEF_LOAD_END			(WM_APP + 302)
 #define WM_APP_CEF_TITLE_CHANGE		(WM_APP + 303)

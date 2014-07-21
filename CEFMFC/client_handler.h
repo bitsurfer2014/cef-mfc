@@ -19,7 +19,8 @@ class ClientHandler : public CefClient,
 	public CefDownloadHandler,
 	public CefLifeSpanHandler,
 	public CefLoadHandler,
-	public CefRequestHandler
+	public CefRequestHandler,
+	public CefJSDialogHandler
 {
 public:
 
@@ -33,24 +34,28 @@ public:
 	ClientHandler();
 	virtual ~ClientHandler();
 
+	// CefClient methods
+	virtual CefRefPtr<CefContextMenuHandler> GetContextMenuHandler() OVERRIDE{ return this; }
+	virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() OVERRIDE{ return this; }
+	virtual CefRefPtr<CefDownloadHandler> GetDownloadHandler() OVERRIDE{ return this; }
+	virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() OVERRIDE{ return this; }
+	virtual CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE{ return this; }
+	virtual CefRefPtr<CefRequestHandler> GetRequestHandler() OVERRIDE{ return this; }
+	virtual CefRefPtr<CefJSDialogHandler> GetJSDialogHandler() OVERRIDE{ return this; }
+
 	// CefLifeSpanHandler methods
 	virtual bool DoClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
 	virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
 	virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
 	virtual bool OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& target_url, const CefString& target_frame_name, const CefPopupFeatures& popupFeatures, CefWindowInfo& windowInfo, CefRefPtr<CefClient>& client, CefBrowserSettings& settings, bool* no_javascript_access) OVERRIDE;
 
-	// CefClient methods
-	virtual CefRefPtr<CefContextMenuHandler> GetContextMenuHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefDownloadHandler> GetDownloadHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefRequestHandler> GetRequestHandler() OVERRIDE { return this; }
-
 	// CefContextMenuHandler methods
 	virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model) OVERRIDE;
 	virtual bool OnContextMenuCommand(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, int command_id, EventFlags event_flags) OVERRIDE;
 	
+	// CefLoadHandler methods
+	virtual void OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward) OVERRIDE;
+
 	// CefDisplayHandler methods
 	virtual void OnAddressChange(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& url) OVERRIDE;
 	virtual void OnTitleChange(CefRefPtr<CefBrowser> browser, const CefString& title) OVERRIDE;
@@ -76,8 +81,11 @@ public:
 	virtual bool OnCertificateError(cef_errorcode_t cert_error, const CefString& request_url, CefRefPtr<CefAllowCertificateErrorCallback> callback) OVERRIDE;
 	virtual bool OnBeforeResourceLoad(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request) OVERRIDE;
 
-	// CefLoadHandler methods
-	virtual void OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward) OVERRIDE;
+	// CefJSDialogHandler methods
+	virtual bool OnBeforeUnloadDialog(CefRefPtr< CefBrowser > browser, const CefString& message_text, bool is_reload, CefRefPtr< CefJSDialogCallback > callback) OVERRIDE;
+	virtual void OnDialogClosed(CefRefPtr< CefBrowser > browser) OVERRIDE;
+	virtual bool OnJSDialog(CefRefPtr< CefBrowser > browser, const CefString& origin_url, const CefString& accept_lang, CefJSDialogHandler::JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr< CefJSDialogCallback > callback, bool& suppress_message) OVERRIDE;
+	virtual void OnResetDialogState(CefRefPtr< CefBrowser > browser) OVERRIDE;
 
 	// Returns the startup URL.
 	std::string GetStartupURL() { return m_StartupURL; }

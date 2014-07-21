@@ -372,6 +372,28 @@ bool ClientHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefF
 	return CefRequestHandler::OnBeforeBrowse(browser, frame, request, is_redirect);
 }
 
+// CefJSDialogHandler methods
+bool ClientHandler::OnBeforeUnloadDialog(CefRefPtr< CefBrowser > browser, const CefString& message_text, bool is_reload, CefRefPtr< CefJSDialogCallback > callback)
+{
+	// do defulat
+	return FALSE;
+}
+
+void ClientHandler::OnDialogClosed(CefRefPtr< CefBrowser > browser)
+{
+}
+
+bool ClientHandler::OnJSDialog(CefRefPtr< CefBrowser > browser, const CefString& origin_url, const CefString& accept_lang, CefJSDialogHandler::JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr< CefJSDialogCallback > callback, bool& suppress_message)
+{
+	// do default
+	suppress_message = FALSE;
+	return FALSE;
+}
+
+void ClientHandler::OnResetDialogState(CefRefPtr< CefBrowser > browser)
+{
+}
+
 std::string ClientHandler::GetDownloadPath(const std::string& file_name)
 {
 	TCHAR szFolderPath[MAX_PATH];

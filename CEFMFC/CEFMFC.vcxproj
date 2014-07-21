@@ -73,8 +73,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>xcopy /y /e /i $(CEF_PATH)Resources\locales $(OutputPath)locales
-xcopy /y $(CEF_PATH)Resources\*.pak $(OutputPath)
+      <Command>xcopy /y /e /i $(CEF_PATH)Resources\*.pak $(OutputPath)
 xcopy /y $(CEF_PATH)Debug\*.dll $(OutputPath)
 </Command>
     </PostBuildEvent>
@@ -108,8 +107,7 @@ xcopy /y $(CEF_PATH)Debug\*.dll $(OutputPath)
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>xcopy /y /e /i $(CEF_PATH)Resources\locales $(OutputPath)locales
-xcopy /y $(CEF_PATH)Resources\*.pak $(OutputPath)
+      <Command>xcopy /y /e /i $(CEF_PATH)Resources\*.pak $(OutputPath)
 xcopy /y $(CEF_PATH)Release\*.dll $(OutputPath)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
